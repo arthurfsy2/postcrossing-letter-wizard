@@ -1,6 +1,6 @@
 {
   "name": "postcrossing-letter-wizard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Auto-generate personalized postcard/letter content from Postcrossing address data",
   "main": "index.js",
   "type": "commonjs",
