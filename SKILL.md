@@ -371,7 +371,13 @@ node scripts/search-postcrossing.js --folder "{folder_path}" --limit 10
 node scripts/search-postcrossing.js --folder "{folder_path}" --date YYYY-MM-DD --limit 10
 
 # 2. 读取指定邮件正文（UID 从搜索结果获取）
+#    - 单封读取（旧方式，串行）
 node scripts/get-postcrossing-body.js --uid <UID> --folder "{folder_path}"
+
+#    - 批量并行读取（新方式，推荐）/ Batch parallel reading (new, recommended)
+#    - 支持同时获取多封邮件，显著提升性能
+node scripts/get-postcrossing-bodies.js --uids <UID1,UID2,UID3,...> --folder "{folder_path}"
+#    输出：JSON 格式，包含所有邮件的完整正文
 ```
 
 邮件主题格式：`Postcrossing Postcard ID: {POSTCARD_COUNTRY_CODE}-XXXXXXX`（`{POSTCARD_COUNTRY_CODE}` 从 `.env_postcrossing` 读取）
