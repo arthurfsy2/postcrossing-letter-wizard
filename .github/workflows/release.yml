@@ -1,0 +1,87 @@
+name: Release / 发布
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release / 创建发布
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code / 检出代码
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js / 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies / 安装依赖
+        run: npm ci
+      
+      - name: Get version from tag / 从标签获取版本号
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+      - name: Create Release Package / 创建发布包
+        run: |
+          mkdir -p release
+          zip -r "release/postcrossing-letter-wizard-v${{ steps.get_version.outputs.VERSION }}.zip" \
+            SKILL.md \
+            README.md \
+            package.json \
+            .gitignore \
+            .env.example \
+            scripts/ \
+            templates/
+      
+      - name: Generate Release Notes / 生成发布说明
+        id: release_notes
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "## What's New / 更新内容" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### Version / 版本: v${VERSION}" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### Features / 功能特性" >> $GITHUB_OUTPUT
+          echo "- Auto-read Postcrossing address emails via IMAP" >> $GITHUB_OUTPUT
+          echo "- AI-powered recipient preference analysis" >> $GITHUB_OUTPUT
+          echo "- Personalized postcard content generation (60-90 words)" >> $GITHUB_OUTPUT
+          echo "- Incremental batch processing support" >> $GITHUB_OUTPUT
+          echo "- Bilingual output (English + Chinese translation)" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### Installation / 安装" >> $GITHUB_OUTPUT
+          echo '\`\`\`bash' >> $GITHUB_OUTPUT
+          echo "# Download and extract / 下载并解压" >> $GITHUB_OUTPUT
+          echo "unzip postcrossing-letter-wizard-v${VERSION}.zip" >> $GITHUB_OUTPUT
+          echo "cd postcrossing-letter-wizard" >> $GITHUB_OUTPUT
+          echo "npm install" >> $GITHUB_OUTPUT
+          echo '\`\`\`' >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### Documentation / 文档" >> $GITHUB_OUTPUT
+          echo "- See [SKILL.md](./SKILL.md) for AI agent instructions" >> $GITHUB_OUTPUT
+          echo "- 查看 [README.md](./README.md) 了解使用方法" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "---" >> $GITHUB_OUTPUT
+          echo "Submitted by: WorkBuddy" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Create GitHub Release / 创建 GitHub 发布
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "v${{ steps.get_version.outputs.VERSION }} - Postcrossing Letter Wizard"
+          body: ${{ steps.release_notes.outputs.NOTES }}
+          files: |
+            release/*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
