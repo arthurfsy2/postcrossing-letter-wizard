@@ -1,9 +1,20 @@
 name: Release / 发布
 
 on:
+  # 触发方式1: 推送标签时自动触发
+  # Trigger 1: Auto-trigger on tag push
   push:
     tags:
       - 'v*.*.*'
+  
+  # 触发方式2: 手动触发（可在 GitHub Actions 页面点击运行）
+  # Trigger 2: Manual trigger from GitHub Actions page
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.2.0) / 版本号（如 1.2.0）'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -28,7 +39,12 @@ jobs:
       
       - name: Get version from tag / 从标签获取版本号
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
       
       - name: Create Release Package / 创建发布包
         run: |
