@@ -1,0 +1,16 @@
+# 用户配置文件存储邮箱凭证，不要提交到 git
+.env
+.env_postcrossing
+.env.local
+.env.*.local
+
+# Node.js 依赖
+node_modules/
+
+# 临时输出文件
+output/
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db

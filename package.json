@@ -1,0 +1,27 @@
+{
+  "name": "postcrossing-letter-wizard",
+  "version": "1.0.0",
+  "description": "Auto-generate personalized postcard/letter content from Postcrossing address data",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "list-folders": "node scripts/list-folders.js",
+    "search-postcrossing": "node scripts/search-postcrossing.js",
+    "get-body": "node scripts/get-postcrossing-body.js",
+    "generate": "node scripts/generate-letter.js"
+  },
+  "keywords": [
+    "postcrossing",
+    "postcard",
+    "letter",
+    "generator"
+  ],
+  "author": "WorkBuddy",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "imap": "^0.8.19",
+    "mailparser": "^3.6.5",
+    "nodemailer": "^6.9.7"
+  }
+}
