@@ -16,6 +16,9 @@ allowed-tools: Read, Write, Bash
 env:
   - EMAIL_ACCOUNT
   - EMAIL_AUTH_CODE
+  - POSTCARD_COUNTRY_CODE
+  - POSTCARD_SENDER_CITY
+  - LANG
 notes:
   - "邮箱支持：根据邮箱后缀自动匹配 IMAP 配置，内置支持 QQ / Gmail / Outlook / 163 / 126 / iCloud / Yahoo / 新浪 / 腾讯企业邮箱。其他邮箱可通过 IMAP_HOST 等环境变量手动覆盖。"
   - "📁 输出文件保存至用户 workspace 的 postcrossing_content/ 目录，与 skill 安装路径无关。"
@@ -108,8 +111,8 @@ Step 5: 生成明信片正文（Generate Postcard Content）
 |------|------|------|
 | `EMAIL_ACCOUNT` | 邮箱账号（脚本根据后缀自动推断 IMAP 服务器） | `user@gmail.com`、`xxx@qq.com` |
 | `EMAIL_AUTH_CODE` | 邮箱授权码或应用专用密码（非登录密码） | `abcdefghijklmnop` |
-| `POSTCARD_COUNTRY_CODE` | Postcrossing 国家 2 位编码（用于搜索邮件主题） | `CN`、`US`、`DE` 等 |
-| `POSTCARD_SENDER_CITY` | 寄信城市名（用于正文中的 "Greetings from ___"） | `Shenzhen`、`Beijing` 等 |
+| `POSTCARD_COUNTRY_CODE` | Postcrossing 国家 2 位编码（用于搜索邮件主题） | `CN`、`US`、`DE` |
+| `POSTCARD_SENDER_CITY` | 寄信城市名（用于正文中的 "Greetings from ___"） | `Shenzhen`、`Beijing` |
 | `LANG` | 输出语言设置（`en`=英文, `zh`=中文） | `en`（默认）、`zh` |
 
 ### 内置支持的邮箱（自动推断，无需额外配置）
@@ -152,6 +155,8 @@ npm install
 
 ### Step 1：环境初始化（Environment Setup）
 
+> 📋 **模板引用**：创建 `.env_postcrossing` 配置文件时，**必须参考** `.env.example` 的格式和变量说明，确保包含所有必需的环境变量。
+
 #### 1.1 语言偏好设置（Language Preference）
 
 **首先检测 `.env_postcrossing` 中 `LANG` 是否已配置：**
@@ -165,7 +170,7 @@ npm install
 - **未配置** → 询问用户：
 
 > 「Welcome! Please select your preferred output language:
-> - **A. English** (default) - All output files will be in English
+> - **A. English** - All output files will be in English
 > - **B. 中文** - 所有输出文件为中文」
 
 根据用户选择，在 `.env_postcrossing` 中添加：
@@ -174,7 +179,7 @@ LANG=en  # 或 LANG=zh
 ```
 
 **规则：**
-- **默认值为 `en`（英文）**
+- 首次使用**必须询问用户**选择语言，不得预设默认值
 - 一旦设置，整个运行周期内锁定该语言
 - 所有脚本通过读取 `.env_postcrossing` 中的 `LANG` 变量确定输出语言
 - 用户可在 `.env_postcrossing` 中手动修改 `LANG` 值来切换语言
@@ -209,9 +214,9 @@ LANG=en  # 或 LANG=zh
 
 - **已配置** → 直接使用，跳过询问
 - **未配置** → 询问用户：
-  > 「你的 Postcrossing 账户注册的国家编码是什么？（默认为 `CN`，如非中国请告知，例如 `US`、`DE`）」
+  > 「你的 Postcrossing 账户注册的国家编码是什么？（例如 `CN`、`US`、`DE`）」
 
-用户确认后，**写入 `.env_postcrossing` 文件**（`POSTCARD_COUNTRY_CODE=CN`），后续直接复用。
+用户确认后，**写入 `.env_postcrossing` 文件**（如 `POSTCARD_COUNTRY_CODE=CN`），后续直接复用。
 此编码用于搜索邮件主题（格式：`Postcrossing Postcard ID: {CODE}-XXXXXXX`）。
 
 ---

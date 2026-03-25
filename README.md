@@ -74,6 +74,7 @@ your-workspace/
     ├── README.md                 # Project documentation (for humans)
     ├── package.json
     ├── .gitignore
+    ├── .env.example              # Configuration template (for reference)
     ├── scripts/                  # IMAP email reading scripts
     │   ├── imap-config.js
     │   ├── list-folders.js
@@ -84,6 +85,8 @@ your-workspace/
         ├── user-content-template.md
         └── postcard-content-template.md
 ```
+
+> **Note**: `.env.example` is a template file for reference only. The actual configuration file `.env_postcrossing` should be placed in your **workspace root directory** (parent of `postcrossing-letter-wizard/`). However, you don't need to manually create it — the AI will guide you through the setup automatically in Step 1.
 
 ## Dependencies
 
