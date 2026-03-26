@@ -132,11 +132,12 @@ imap.once('ready', () => {
     }
 
     // ── 关键词策略 / Keyword strategy ────────────────────────────────────────────────────────
-    // Postcrossing 不同时期/语言的邮件主题格式可能不同，内置两种已知格式：
+    // Postcrossing 不同时期/语言的邮件主题格式可能不同，内置三种已知格式：
     //   "Postcard ID"  → 新格式：Postcrossing Postcard ID: CN-XXXXXXX
     //   "PostcardID"   → 老格式：Postcrossing - PostcardID: CN-XXXXXXX
+    //   "Postcrossing" → 通用匹配：匹配所有 Postcrossing 相关邮件
     // 如果用户通过 --subject-keyword 传入自定义词，则只用该词搜一次。
-    const keywords = subjectKeyword ? [subjectKeyword] : ['Postcard ID', 'PostcardID'];
+    const keywords = subjectKeyword ? [subjectKeyword] : ['Postcard ID', 'PostcardID', 'Postcrossing'];
     if (subjectKeyword) {
       console.log(`🔑 ${t.customKeyword}: "${subjectKeyword}"\n`);
     }

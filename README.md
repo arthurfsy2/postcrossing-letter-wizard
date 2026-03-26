@@ -26,13 +26,19 @@ Or in Chinese:
 ```
 
 The AI will automatically execute the complete workflow:
-1. **Step 1**: Read Postcrossing address emails from your mailbox
-2. **Step 2**: Analyze recipient preferences and background
-3. **Step 3**: Save structured analysis to local file
-4. **Step 4**: Collect your personal context (or reuse existing template)
-5. **Step 5**: Generate personalized postcard messages (60-90 words, English + Chinese translation)
+1. **Step 1**: Environment setup (email credentials, language, country/city)
+2. **Step 2**: Read Postcrossing address emails from your mailbox
+3. **Step 2.5**: Save raw email content (new, for verification)
+4. **Step 3**: Analyze recipient preferences and background
+5. **Step 4**: Collect your personal context (or reuse existing template, supports blog import)
+6. **Step 5**: Generate personalized postcard messages (60-90 words, English + Chinese translation)
+7. **Step 6**: Send backup email with all files compressed (optional, new)
 
-All files are saved to `postcrossing_content/` in your workspace.
+Additional features:
+- HTML print version generation (A4 format with cut lines, new)
+- Handwritten preference detection (highlight recipients who prefer handwritten cards, new)
+
+All files are saved to `postcrossing_content/{date}/` in your workspace (date-based subfolders).
 
 ### Manual Mode (Optional)
 
@@ -51,13 +57,15 @@ node scripts/get-postcrossing-body.js --uid 220 --folder "your_folder"
 
 ## Output Files
 
-All generated files are saved in the `postcrossing_content/` folder in your workspace root:
+All generated files are saved in the `postcrossing_content/{date}/` folder in your workspace root (date-based subfolders):
 
 | File | Content |
 |------|---------|
+| `{date}_raw-emails.md` | Raw email content for verification (new) |
 | `{date}_recipient-analysis.md` | Recipient information and preference analysis |
-| `user-content-template.md` | Your personal background material (reused across batches) |
-| `{date}_postcard-content.md` | Generated postcard messages (English + Chinese translation for zh users) |
+| `user-content-template.md` | Your personal background material (reused across batches, supports blog import) |
+| `{date}_postcard-content.md` | Generated postcard messages (English + Chinese translation) |
+| `{date}_print.html` | HTML print version with cut lines (new, optional) |
 
 ## Detailed Documentation
 
@@ -76,14 +84,18 @@ your-workspace/
     ├── .gitignore
     ├── .env.example              # Configuration template (for reference)
     ├── scripts/                  # IMAP email reading scripts
-    │   ├── imap-config.js
-    │   ├── list-folders.js
-    │   ├── search-postcrossing.js
-    │   └── get-postcrossing-body.js
+    │   ├── imap-config.js        # Auto-detect IMAP configuration
+    │   ├── list-folders.js       # List email folders
+    │   ├── search-postcrossing.js # Search Postcrossing emails
+    │   ├── get-postcrossing-body.js # Read email body
+    │   ├── save-raw-emails.js    # Save raw emails to markdown (new)
+    │   └── generate-print-html.js # Generate HTML print version (new)
     └── templates/                # Output file format templates
+        ├── raw-emails-template.md # Raw emails template (new)
         ├── recipient-analysis-template.md
         ├── user-content-template.md
-        └── postcard-content-template.md
+        ├── postcard-content-template.md
+        └── print-html-template.html # HTML print template (new)
 ```
 
 > **Note**: `.env.example` is a template file for reference only. The actual configuration file `.env_postcrossing` should be placed in your **workspace root directory** (parent of `postcrossing-letter-wizard/`). However, you don't need to manually create it — the AI will guide you through the setup automatically in Step 1.
